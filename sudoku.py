@@ -94,10 +94,24 @@ def generate_constraints():
     As non-equal constraints are symmetrical there is no need to generate the symmetri, e.g., generate (0,1) but
     not (1,0).
     """
-
-    # ********** YOU IMPLEMENT THIS **********
-
-    return []
+    constraints = []
+    # Contraints on blocks
+    for bl in range(3): # iterate block by block
+        for bc in range(3):
+            for i in range(9): # iterate in a block cell by cell
+                for k in range(i+1,9):
+                    constraints.append((bl*3*9 + bc*3 + i%3 + 9*(i//3), bl*3*9 + bc*3 + k%3 + 9*(k//3)))
+    # Constraints on lines
+    for l in range(9):
+        for c in range(8):
+            for k in range(c+3-c%3,9): # +3-c%3 allows not to add a constraint already added in blocks
+                constraints.append((c + 9*l, k + 9*l))
+    # Contraints on columns
+    for c in range(9):
+        for l in range(8):
+            for k in range(l+3-l%3,9): # +3-l%3 allows not to add a constraint already added in blocks
+                constraints.append((c + 9*l, c + 9*k))
+    return constraints
 
 
 #
