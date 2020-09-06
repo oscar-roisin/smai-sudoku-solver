@@ -62,7 +62,6 @@ def solve(st, cn):
         return i
 
     def GTB(cn, i, A):
-        #print(A)
         nonlocal num_nodes
         num_nodes += 1
         if i >= cn.num_variables():
@@ -77,9 +76,18 @@ def solve(st, cn):
 
 
     def BT(cn, i, A):
-
-        # ********** YOU IMPLEMENT THIS **********
-
+        nonlocal num_nodes
+        num_nodes += 1
+        if i >= cn.num_variables():
+            return cn.consistent_all(A)
+        v_contraint_with = [index for index in cn.get_vars_in_contraint_with(i) if index<i]
+        for v in cn.get_domain(i):
+            if not any([v == A[ind] for ind in v_contraint_with]):
+                A.append(v)
+                solved = GTB(cn, i+1, A)
+                if solved:
+                    return True
+                A.pop()
         return False
 
 
