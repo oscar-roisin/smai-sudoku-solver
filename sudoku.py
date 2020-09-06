@@ -76,10 +76,14 @@ def generate_domains(puzzles):
     Returns a list. Each element in the list is a list of sets with proper variable domain values
     (where the first set is the domain for variable 0, the second for variable 1 ect.)
     """
-
-    # ********** YOU IMPLEMENT THIS **********
-
-    return []
+    domains = []
+    for puzzle in puzzles:
+        domain = []
+        for i in puzzle:
+            val = set([i]) if i else set(range(1,10))
+            domain.append(val)
+        domains.append(domain)
+    return domains
 
 
 def generate_constraints():
