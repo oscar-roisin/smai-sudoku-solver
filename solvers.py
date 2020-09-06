@@ -13,18 +13,42 @@ class SolverType(Enum):
     CBJ = 4         # Conflict-Directed Backjumping
 
 
-def make_arc_consistent( cn ):
+def make_arc_consistent(cn):
     """
     Makes the cn constraint network arc-consistent (use the AC-3 algorithm).
     (there are no unary-constraints so you can omit making it first node-consistent).
     """
+    queue = list(cn.get_constraints())
+    while queue:
+        (xi, xj) = queue.pop(0)
+        if arc_reduce(cn, xi, xj): 
+            # if a cell has 0 possibilities, sudoku has no solution
+            if len(cn.get_domain(xi)) == 0:
+                return False
+            for Xk in cn.get_vars_in_contraint_with(xi):
+                if Xk != xi:
+                    queue.append((Xk, xi))    
+    return True
 
-    # ********** YOU IMPLEMENT THIS **********
+def arc_reduce(cn, xi, xj):
+    """
+    Removes inconsistent values from domain.
+    """
+    removed = False
+    d = list(cn.get_domain(xi))
+    # for each possible value remaining for the xi cell
+    for value in cn.get_domain(xi):
+        # if xi=value is in conflict with xj=poss for each possibility
+        if not any([value != poss for poss in cn.get_domain(xj)]):
+            # then remove xi=value
+            d.remove(value)
+            removed = True
+    # update the domain
+    if removed: cn.set_domain(xi, d)
+    # returns true if a value has been removed
+    return removed
 
-    return
-
-
-def solve( st, cn ):
+def solve(st, cn):
     """
     Use the specified backtracking algorithm (st) to solve the CSP problem (cn).
     Returns a tuple (assignment, nodes), where the former is the solution (an empty list if not found)
