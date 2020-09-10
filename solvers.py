@@ -92,15 +92,36 @@ def solve(st, cn):
 
 
     def BJ(cn, i, A):
-
-        # ********** YOU IMPLEMENT THIS **********
-
-        return (False, 0)
+        nonlocal num_nodes
+        num_nodes += 1
+        return_depth = 0
+        max_check_lvl = 0
+        if i >= cn.num_variables():
+            return (cn.consistent_all(A), i)
+        v_contraint_with = [index for index in cn.get_vars_in_contraint_with(i) if index<i]
+        for v in cn.get_domain(i):
+            consistent = True
+            h = 0
+            while consistent & (h < i):
+                if h in v_contraint_with:
+                    if v == A[h]:
+                        consistent = False
+                h+=1
+            max_check_lvl = h-1
+            if consistent:
+                A.append(v)
+                solved, max_check_lvl = BJ(cn, i+1, A)
+                if solved:
+                    return (True, i)
+                if max_check_lvl < i:
+                    A.pop()
+                    return (False, max_check_lvl)
+                A.pop()
+            return_depth = max(return_depth, max_check_lvl)
+        return (False, return_depth)
 
 
     def CBJ(cn, i, A, CS):
-
-        # ********** YOU IMPLEMENT THIS **********
 
         return (False, 0)
 
