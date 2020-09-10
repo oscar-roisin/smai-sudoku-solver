@@ -84,7 +84,7 @@ def solve(st, cn):
         for v in cn.get_domain(i):
             if not any([v == A[ind] for ind in v_contraint_with]):
                 A.append(v)
-                solved = GTB(cn, i+1, A)
+                solved = BT(cn, i+1, A)
                 if solved:
                     return True
                 A.pop()
