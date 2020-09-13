@@ -80,14 +80,13 @@ def solve(st, cn):
         num_nodes += 1
         if i >= cn.num_variables():
             return cn.consistent_all(A)
-        v_contraint_with = [index for index in cn.get_vars_in_contraint_with(i) if index<i]
         for v in cn.get_domain(i):
-            if not any([v == A[ind] for ind in v_contraint_with]):
-                A.append(v)
+            A.append(v)
+            if consistent_upto_level(cn,i,A) == i:
                 solved = BT(cn, i+1, A)
                 if solved:
                     return True
-                A.pop()
+            A.pop()
         return False
 
 
@@ -98,25 +97,20 @@ def solve(st, cn):
         max_check_lvl = 0
         if i >= cn.num_variables():
             return (cn.consistent_all(A), i)
-        v_contraint_with = [index for index in cn.get_vars_in_contraint_with(i) if index<i]
         for v in cn.get_domain(i):
-            consistent = True
-            h = 0
-            while consistent & (h < i):
-                if h in v_contraint_with:
-                    if v == A[h]:
-                        consistent = False
-                h+=1
-            max_check_lvl = h-1
-            if consistent:
-                A.append(v)
+            A.append(v)
+            h = consistent_upto_level(cn,i,A)
+            if h != i:
+                max_check_lvl = h
+            else:
+                max_check_lvl = h-1
                 solved, max_check_lvl = BJ(cn, i+1, A)
                 if solved:
                     return (True, i)
                 if max_check_lvl < i:
                     A.pop()
                     return (False, max_check_lvl)
-                A.pop()
+            A.pop()
             return_depth = max(return_depth, max_check_lvl)
         return (False, return_depth)
 
@@ -127,26 +121,19 @@ def solve(st, cn):
         if i >= cn.num_variables():
             return (cn.consistent_all(A), i)
         CS[i].add(0)
-        v_contraint_with = [index for index in cn.get_vars_in_contraint_with(i) if index<i]
         for v in cn.get_domain(i):
-            consistent = True
-            h = 0
-            while consistent & (h < i):
-                if h in v_contraint_with:
-                    if v == A[h]:
-                        consistent = False
-                h+=1
-            if not consistent:
-                CS[i].add(h-1)
+            A.append(v)
+            h = consistent_upto_level(cn,i,A)
+            if h != i:
+                CS[i].add(h)
             else:
-                A.append(v)
                 solved, returned_depth = CBJ(cn, i+1, A, CS)
                 if solved:
                     return (True, i)
                 if returned_depth < i:
                     A.pop()
                     return (False, returned_depth)
-                A.pop()
+            A.pop()
         return_depth = max(CS[i])
         CS[return_depth] = CS[return_depth].union(CS[i] - set([return_depth]))
         return (False, return_depth)
