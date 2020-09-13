@@ -11,8 +11,10 @@ import constraintnetwork
 import solvers
 from timeit import default_timer as timer
 
-def log_string( str ):
-    with open( 'output.txt', 'a' ) as f:
+def log_string( str, namefile, arc_consistent ):
+    filetoopen = 'output' + '-' + namefile
+    if arc_consistent: filetoopen = filetoopen + '-a'
+    with open( filetoopen+'.txt', 'a' ) as f:
         f.write(str)
         f.write('\n')
 
@@ -123,4 +125,4 @@ for solver_type in solvers_to_run:
             else:
                 output = "{:3d} {:15s} {:10d} {:s}".format(i, str(solver_type),nodes, str(solution))
             print(output)
-            log_string(output)
+            log_string(output, name, arc_consistent)
