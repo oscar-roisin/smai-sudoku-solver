@@ -120,7 +120,7 @@ def solve(st, cn):
         num_nodes += 1
         if i >= cn.num_variables():
             return (cn.consistent_all(A), i)
-        CS[i].add(0)
+        CS[i] = set()
         for v in cn.get_domain(i):
             A.append(v)
             h = consistent_upto_level(cn,i,A)
