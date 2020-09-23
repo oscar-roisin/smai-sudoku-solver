@@ -19,6 +19,7 @@ def make_arc_consistent(cn):
     (there are no unary-constraints so you can omit making it first node-consistent).
     """
     queue = list(cn.get_constraints())
+    queue = list(set().union(queue,[tuple(reversed(x)) for x in queue]))
     while queue:
         (xi, xj) = queue.pop(0)
         if arc_reduce(cn, xi, xj): 
